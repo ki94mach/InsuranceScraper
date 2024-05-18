@@ -35793,3 +35793,84 @@ JavaScript error: https://darman.tamin.ir/Forms/Public/Druglist.aspx?pagename=hd
 JavaScript error: https://darman.tamin.ir/Forms/Public/Druglist.aspx?pagename=hdpDrugList, line 336: SyntaxError: expected expression, got ';'
 1715767730005	Marionette	INFO	Stopped listening on port 54484
 Dynamically enable window occlusion 1
+1716019967943	geckodriver	INFO	Listening on 127.0.0.1:54480
+1716019971020	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-no-remote" "-profile" "C:\\Users\\Mohajeri.K\\AppData\\Local\\Temp\\rust_mozprofileHgW41P"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1716019971482	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1716019971565	Marionette	INFO	Listening on port 54500
+Read port: 54500
+1716019971735	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1716020002039	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+1716021281599	Marionette	INFO	Stopped listening on port 54500
+Dynamically enable window occlusion 1
+1716021299023	geckodriver	INFO	Listening on 127.0.0.1:55289
+1716021302092	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-no-remote" "-profile" "C:\\Users\\Mohajeri.K\\AppData\\Local\\Temp\\rust_mozprofiletAsPzE"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1716021302639	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1716021302714	Marionette	INFO	Listening on port 55299
+Read port: 55299
+1716021302890	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+JavaScript warning: https://mdp.ihio.gov.ir/extnet/extnet-all-js/ext.axd?v=4.6.0, line 403: unreachable code after return statement
+1716021333641	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
+1716022098521	Marionette	INFO	Stopped listening on port 55299
+Dynamically enable window occlusion 1
+1716022119184	geckodriver	INFO	Listening on 127.0.0.1:55413
+1716022122242	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-no-remote" "-profile" "C:\\Users\\Mohajeri.K\\AppData\\Local\\Temp\\rust_mozprofilexDlH3Q"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1716022122665	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1716022122745	Marionette	INFO	Listening on port 55423
+Read port: 55423
+1716022122920	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://darman.tamin.ir/Forms/Public/Druglist.aspx?pagename=hdpDrugList, line 337: SyntaxError: expected expression, got ';'
+JavaScript error: https://darman.tamin.ir/Forms/Public/Druglist.aspx?pagename=hdpDrugList, line 336: SyntaxError: expected expression, got ';'
+JavaScript error: https://darman.tamin.ir/Forms/Public/Druglist.aspx?pagename=hdpDrugList, line 336: SyntaxError: expected expression, got ';'
+JavaScript error: https://darman.tamin.ir/Forms/Public/Druglist.aspx?pagename=hdpDrugList, line 336: SyntaxError: expected expression, got ';'
+JavaScript error: https://darman.tamin.ir/Forms/Public/Druglist.aspx?pagename=hdpDrugList, line 336: SyntaxError: expected expression, got ';'
+JavaScript error: https://darman.tamin.ir/Forms/Public/Druglist.aspx?pagename=hdpDrugList, line 336: SyntaxError: expected expression, got ';'
+JavaScript error: https://darman.tamin.ir/Forms/Public/Druglist.aspx?pagename=hdpDrugList, line 336: SyntaxError: expected expression, got ';'
+JavaScript error: https://darman.tamin.ir/Forms/Public/Druglist.aspx?pagename=hdpDrugList, line 336: SyntaxError: expected expression, got ';'
+JavaScript error: https://darman.tamin.ir/Forms/Public/Druglist.aspx?pagename=hdpDrugList, line 336: SyntaxError: expected expression, got ';'
+JavaScript error: https://darman.tamin.ir/Forms/Public/Druglist.aspx?pagename=hdpDrugList, line 336: SyntaxError: expected expression, got ';'
+JavaScript error: https://darman.tamin.ir/Forms/Public/Druglist.aspx?pagename=hdpDrugList, line 336: SyntaxError: expected expression, got ';'
+JavaScript error: https://darman.tamin.ir/Forms/Public/Druglist.aspx?pagename=hdpDrugList, line 336: SyntaxError: expected expression, got ';'
+JavaScript error: https://darman.tamin.ir/Forms/Public/Druglist.aspx?pagename=hdpDrugList, line 336: SyntaxError: expected expression, got ';'
+1716022153055	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
+JavaScript error: https://darman.tamin.ir/Forms/Public/Druglist.aspx?pagename=hdpDrugList, line 336: SyntaxError: expected expression, got ';'
+JavaScript error: https://darman.tamin.ir/Forms/Public/Druglist.aspx?pagename=hdpDrugList, line 336: SyntaxError: expected expression, got ';'
+1716023477219	geckodriver	INFO	Listening on 127.0.0.1:55646
+1716023480294	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-no-remote" "-profile" "C:\\Users\\Mohajeri.K\\AppData\\Local\\Temp\\rust_mozprofile9tsY56"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1716023480660	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1716023480738	Marionette	INFO	Listening on port 55656
+Read port: 55656
+1716023480804	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1716023511454	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
+console.error: ({})
