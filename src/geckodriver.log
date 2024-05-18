@@ -35863,8 +35863,9 @@ JavaScript error: https://darman.tamin.ir/Forms/Public/Druglist.aspx?pagename=hd
 1716022153055	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
 JavaScript error: https://darman.tamin.ir/Forms/Public/Druglist.aspx?pagename=hdpDrugList, line 336: SyntaxError: expected expression, got ';'
 JavaScript error: https://darman.tamin.ir/Forms/Public/Druglist.aspx?pagename=hdpDrugList, line 336: SyntaxError: expected expression, got ';'
-1716023477219	geckodriver	INFO	Listening on 127.0.0.1:55646
-1716023480294	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-no-remote" "-profile" "C:\\Users\\Mohajeri.K\\AppData\\Local\\Temp\\rust_mozprofile9tsY56"
+1716023554103	Marionette	INFO	Stopped listening on port 55423
+Dynamically enable window occlusion 1
+ng command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-no-remote" "-profile" "C:\\Users\\Mohajeri.K\\AppData\\Local\\Temp\\rust_mozprofile9tsY56"
 console.warn: services.settings: Ignoring preference override of remote settings server
 console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
 1716023480660	Marionette	INFO	Marionette enabled
@@ -35874,3 +35875,57 @@ Read port: 55656
 1716023480804	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
 1716023511454	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
 console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+Exiting due to channel error.
+Exiting due to channel error.
+rvices.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1716024079456	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1716024079530	Marionette	INFO	Listening on port 56186
+Read port: 56186
+1716024079736	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1716024095101	Marionette	INFO	Stopped listening on port 56186
+Dynamically enable window occlusion 1
+JavaScript error: chrome://remote/content/marionette/cert.sys.mjs, line 47: NS_ERROR_NOT_AVAILABLE: Component returned failure code: 0x80040111 (NS_ERROR_NOT_AVAILABLE) [nsICertOverrideService.setDisableAllSecurityChecksAndLetAttackersInterceptMyData]
+1716025864034	geckodriver	INFO	Listening on 127.0.0.1:56749
+1716025867103	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-no-remote" "-profile" "C:\\Users\\Mohajeri.K\\AppData\\Local\\Temp\\rust_mozprofilerWBIWW"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1716025867488	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1716025867580	Marionette	INFO	Listening on port 56759
+Read port: 56759
+1716025867780	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1716025898362	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+console.error: ({})
+Exiting due to channel error.
+Exiting due to channel error.
+Exiting due to channel error.
