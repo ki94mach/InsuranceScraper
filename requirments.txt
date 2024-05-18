@@ -1,5 +1,0 @@
-beautifulsoup4=4.12.2=py310haa95532_0
-pandas=2.0.3=py310h4ed8f06_0
-jdatetime==4.1.1
-gspread==5.12.4
-selenium=3.141.0=py310h2bbff1b_1000
