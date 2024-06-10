@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 import pandas as pd
 import jdatetime
+import os
+import csv
 class DataProcessing:
     def __init__(self , website: str,generic_codes: list, all_html: list, found_codes: list, not_found_codes: list):
         self.generic_codes = generic_codes
@@ -86,6 +88,24 @@ class DataProcessing:
                     self.not_found_codes.append(row['generic_code'])
                     self.found_codes.remove(row['generic_code'])
             self.insurance_df = self.insurance_df[self.insurance_df['patient_per'] != 'null']
+    def save_raw(self):
+        """
+        Saves raw data for history call checks
+        """
+        raw_path = f"data/{self.website}_raw.csv"
+        if not os.path.exists(raw_path):
+            with open(raw_path, "w", newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(self.insurance_df.columns)
+        raw_df = pd.read_csv(raw_path, header=0, dtype='str')
+        self.insurance_df.fillna('', inplace=True)
+        raw_df.fillna('', inplace=True)
+        total_raw = (
+            pd.concat([raw_df, self.insurance_df])  
+            .reset_index(drop=True)
+            .drop_duplicates(keep="first")
+            )
+        total_raw.to_csv(raw_path, index=False, encoding='utf-8-sig')
     def clean_data(self) -> pd.DataFrame:
         if self.website == 'Khadamat':
             # This part is for dealing with generic codes with multiple rows
@@ -111,7 +131,7 @@ class DataProcessing:
             # remove unwanted columns
             self.insurance_df = self.insurance_df[[
                 'generic_code','generic_name','change_date_2','price',
-                'coverage_per','coverage_per_2','coverage_per_3',
+                'coverage_per','coverage_per_2','coverage_per_3', 'subsidy'
                 ]]
             
             # Remove commas from each column individually
