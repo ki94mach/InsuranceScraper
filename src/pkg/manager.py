@@ -14,7 +14,7 @@ class DataManager:
         """
         data_dir = f"data/{self.website}Data.csv"
         # importing the historical data into a dataframe (if the data type is not determined, drop duplicate won't work)
-        history_df = pd.read_csv(data_dir, dtype={'generic_code':'object','price':'int64','coverage':'float64'})
+        history_df = pd.read_csv(data_dir, dtype={'generic_code':'object','price':'int64','coverage':'float64', 'subsidy':'int64'})
 
         # converting generic_code into 5 digit number
         history_df['generic_code'] = history_df['generic_code'].str.pad(5, 'left', '0')
@@ -24,7 +24,7 @@ class DataManager:
         insurance_total_df = (
             pd.concat([history_df, self.insurance_df])
             .sort_values(by='date')
-            .drop_duplicates(subset=['generic_code', 'price', 'coverage'], keep='first')
+            .drop_duplicates(subset=['generic_code', 'price', 'coverage', 'subsidy'], keep='first')
             .reset_index(drop=True)
             )
         # writing the data to main csv file (still not overwritting)
@@ -63,7 +63,7 @@ class DataManager:
             c2 = final_df['coverage']==final_df['درصد بیمه (نیروهای مسلح)']
             self.insurance_update = final_df.drop(final_df[ c1 & c2 ].index)
             self.insurance_update.drop(columns=['درصد بیمه (نیروهای مسلح)', 'مبنای پرداختی بیمه (نیروهای مسلح)'], inplace=True)
-    
+        return self.insurance_update
     def google_sheet_update(self):
         """
         Update a google sheet to inform supply chain planning team to imply the changes

@@ -22,7 +22,7 @@ def main():
         processor.code_count()
         manager = DataManager(website, insurance_df, triple_price_df)
         manager.storage()
-        manager.analysis()
+        insurance_update = manager.analysis()
         manager.google_sheet_update()
 if __name__ == "__main__":
     main()

@@ -176,7 +176,7 @@ class DataProcessing:
             # removing unused columns
             columns_to_drop = ['insurance','hospital','document_office','medical_record','maximum_prescribed',
                             'web','uid_register','eprescription','A','B','C',
-                            'price_w/o_subsidy', 'subsidy', 'coverage_w/o_subsidy']
+                            'price_w/o_subsidy', 'coverage_w/o_subsidy']
             self.insurance_df.drop(columns=columns_to_drop, inplace=True)
 
             #inserting todays date in jalali format
