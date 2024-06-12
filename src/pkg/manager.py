@@ -14,7 +14,10 @@ class DataManager:
         """
         data_dir = f"data/{self.website}Data.csv"
         # importing the historical data into a dataframe (if the data type is not determined, drop duplicate won't work)
-        history_df = pd.read_csv(data_dir, dtype={'generic_code':'object','price':'int64','coverage':'float64', 'subsidy':'int64'})
+        history_df = pd.read_csv(data_dir, dtype={
+            'generic_code':'object','price':'float64',
+            'coverage':'float64', 'subsidy':'float64'}
+            )
 
         # converting generic_code into 5 digit number
         history_df['generic_code'] = history_df['generic_code'].str.pad(5, 'left', '0')

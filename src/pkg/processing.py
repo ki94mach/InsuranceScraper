@@ -136,13 +136,14 @@ class DataProcessing:
             
             # Remove commas from each column individually
             self.insurance_df['price'] = self.insurance_df['price'].str.replace(',', '')
+            self.insurance_df['subsidy'] = self.insurance_df['subsidy'].str.replace(',', '')
 
             # Replace empty strings with 0 in each column individually
-            for col in ['price', 'coverage_per', 'coverage_per_2', 'coverage_per_3']:
+            for col in ['price', 'coverage_per', 'coverage_per_2', 'coverage_per_3', 'subsidy']:
                 self.insurance_df[col] = self.insurance_df[col].replace('', 0)
 
             # Change the data type of these columns to float (this step may not be necessary as pd.to_numeric should already have converted them to float)
-            self.insurance_df = self.insurance_df.astype({'price': 'float64', 'coverage_per': 'float64',
+            self.insurance_df = self.insurance_df.astype({'price': 'float64', 'subsidy': 'float64', 'coverage_per': 'float64',
                                 'coverage_per_2': 'float64', 'coverage_per_3': 'float64'})
 
             # lets rename the column headers
@@ -165,6 +166,8 @@ class DataProcessing:
 
             # astype function didn't change the type and reason is unknown, checked for any non-numeric value in these columns but nothing was found 
             # even trimmed but still didn't work
+            self.insurance_df['price'] = self.insurance_df['price'].str.replace(',', '')
+            self.insurance_df['subsidy'] = self.insurance_df['subsidy'].str.replace(',', '')
             columns_to_convert = ['price_w/o_subsidy', 'subsidy', 'price']
             self.insurance_df[columns_to_convert] = self.insurance_df[columns_to_convert].apply(pd.to_numeric, errors='coerce')
 

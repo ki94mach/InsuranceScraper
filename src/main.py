@@ -1,3 +1,7 @@
+# Suppress the specific warning from openpyxl
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module='openpyxl')
+
 from pkg.manager import  DataManager
 from pkg.tripleprice import TriplePrice 
 from pkg.scraper import WebScraper
