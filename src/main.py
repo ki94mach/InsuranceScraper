@@ -16,14 +16,35 @@ def main():
 
     # Insurance websites
     websites = ['Mosallah', 'Khadamat', 'Taamin']
-    for website in websites:
+    choice = input('''
+          Please Select an Option:\n
+          1. All\n
+          2. Mossallah\n
+          3. Khadamat\n
+          4. Taamin\n
+          Enter your choice (1/2/3/4): 
+          ''')
+    selected_websites = []
+    if choice == '1':
+        selected_websites = websites
+    elif choice == '2':
+        selected_websites.append('Mosallah')
+    elif choice == '3':
+        selected_websites.append('Khadamat')
+    elif choice == '4':
+        selected_websites.append('Taamin')
+    else:
+        print("Invalid choice. Please enter 1, 2, 3, or 4.")
+        return
+    for website in selected_websites:
+        print(f"Running operations for {website}...")
         scraper = WebScraper(website, generic_codes)
         all_html, found_codes, not_found_codes = scraper.run_crawler()
         processor = DataProcessing(website, generic_codes, all_html, found_codes, not_found_codes)
         processor.parser()
         processor.save_raw()
         insurance_df = processor.clean_data()
-        processor.code_count()
+        # processor.code_count()
         manager = DataManager(website, insurance_df, triple_price_df)
         manager.storage()
         insurance_update = manager.analysis()

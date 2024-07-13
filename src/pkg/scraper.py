@@ -132,26 +132,32 @@ class WebScraper:
         Returns:
             An html string for later parsing
         """
-        self.wait.until(EC.presence_of_all_elements_located((By.ID, "ctl00_ContentPlaceHolder1_txtDrugCode")))
-        # Locate the input field by its HTML attributes (you need to inspect the page source to find these attributes)
-        code_input = driver.find_element(By.ID, 'ctl00_ContentPlaceHolder1_txtDrugCode')
+        for attempt in range(self.max_attempts):
+            try:
+                self.wait.until(EC.presence_of_all_elements_located((By.ID, "ctl00_ContentPlaceHolder1_txtDrugCode")))
+                # Locate the input field by its HTML attributes (you need to inspect the page source to find these attributes)
+                code_input = driver.find_element(By.ID, 'ctl00_ContentPlaceHolder1_txtDrugCode')
 
-        # Input generic_code code
-        code_input.clear()  # Clear any existing text in the input field
-        code_input.send_keys(code)
+                # Input generic_code code
+                code_input.clear()  # Clear any existing text in the input field
+                code_input.send_keys(code)
 
-        # Locate and click the search button
-        search_button = driver.find_element(By.ID, 'ctl00_ContentPlaceHolder1_btnSearch')
-        search_button.click()
+                # Locate and click the search button
+                search_button = driver.find_element(By.ID, 'ctl00_ContentPlaceHolder1_btnSearch')
+                search_button.click()
 
-        # Wait for the table to load
-        try:
-            table = self.wait.until(EC.presence_of_element_located((By.ID, "ctl00_ContentPlaceHolder1_Grd_Dr_DXDataRow0")))
-            table_html = table.get_attribute('outerHTML')
-            return table_html
-        except TimeoutException:
-            #print(code,'WAS NOT FOUND')
-            return None
+                # Wait for the table to load
+                try:
+                    table = self.wait.until(EC.presence_of_element_located((By.ID, "ctl00_ContentPlaceHolder1_Grd_Dr_DXDataRow0")))
+                    table_html = table.get_attribute('outerHTML')
+                    return table_html
+                except TimeoutException:
+                    #print(code,'WAS NOT FOUND')
+                    return None
+            except TimeoutException:
+                print(f"Timeout encountered on attempt {attempt + 1} for code {code}. Refreshing and retrying...")
+                driver.refresh()  # Refresh the page before the next attempt.
+                time.sleep(3)  # A short pause before the next attempt may help.
     def _khadamat_crawler(self, driver: webdriver.Firefox, code: int) -> str:
         """
         Crawls the taamin website for every genric code
@@ -163,30 +169,36 @@ class WebScraper:
         Returns:
             An html string for later parsing
         """
-        # because the site renders after every search I had to make sure that every elemnt is presented
-        self.wait.until(EC.presence_of_all_elements_located((By.ID, 'txtSrchSrvCode-inputEl')))
-        # Locate the input field by its HTML attributes (you need to inspect the page source to find these attributes)
-        code_input = driver.find_element(By.ID, 'txtSrchSrvCode-inputEl')
-        # Input generic_code code
-        code_input.clear()  # Clear any existing text in the input field
-        code_input.send_keys(code)
-        # because the mosallah site renders after every search I had to make sure that every element is presented in html
-        # Locate and click the search button
-        search_button = self.wait.until(EC.element_to_be_clickable((By.ID, 'BtnSrchService')))
-        search_button.click()
-        #wait for the search bar to appear and then disappear
-        self.wait.until(EC.visibility_of_element_located(((By.CSS_SELECTOR, ".x-mask-msg.x-mask-loading"))))
-        self.wait.until(EC.invisibility_of_element_located(((By.CSS_SELECTOR, ".x-mask-msg.x-mask-loading"))))
-        # Wait for the table to load
-        time.sleep(2)
-        self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'x-grid-item-container')))
-        # checking if the row is not empty
-        rows = driver.find_elements(By.CLASS_NAME, 'x-grid-row')
-        if not rows:  # If list of rows is empty, there are no results
-            #print(f"No results found for code: {code}")
-            return None
-        else:  # If rows are found, we proceed with extracting the data
-            table = driver.find_element(By.CLASS_NAME, 'x-grid-item-container')
-            table_html = table.get_attribute('outerHTML')
-            return table_html
+        for attempt in range(self.max_attempts):
+            try:
+                # because the site renders after every search I had to make sure that every elemnt is presented
+                self.wait.until(EC.presence_of_all_elements_located((By.ID, 'txtSrchSrvCode-inputEl')))
+                # Locate the input field by its HTML attributes (you need to inspect the page source to find these attributes)
+                code_input = driver.find_element(By.ID, 'txtSrchSrvCode-inputEl')
+                # Input generic_code code
+                code_input.clear()  # Clear any existing text in the input field
+                code_input.send_keys(code)
+                # because the mosallah site renders after every search I had to make sure that every element is presented in html
+                # Locate and click the search button
+                search_button = self.wait.until(EC.element_to_be_clickable((By.ID, 'BtnSrchService')))
+                search_button.click()
+                #wait for the search bar to appear and then disappear
+                self.wait.until(EC.visibility_of_element_located(((By.CSS_SELECTOR, ".x-mask-msg.x-mask-loading"))))
+                self.wait.until(EC.invisibility_of_element_located(((By.CSS_SELECTOR, ".x-mask-msg.x-mask-loading"))))
+                # Wait for the table to load
+                time.sleep(2)
+                self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'x-grid-item-container')))
+                # checking if the row is not empty
+                rows = driver.find_elements(By.CLASS_NAME, 'x-grid-row')
+                if not rows:  # If list of rows is empty, there are no results
+                    #print(f"No results found for code: {code}")
+                    return None
+                else:  # If rows are found, we proceed with extracting the data
+                    table = driver.find_element(By.CLASS_NAME, 'x-grid-item-container')
+                    table_html = table.get_attribute('outerHTML')
+                    return table_html
+            except TimeoutException:
+                print(f"Timeout encountered on attempt {attempt + 1} for code {code}. Refreshing and retrying...")
+                driver.refresh()  # Refresh the page before the next attempt.
+                time.sleep(3)  # A short pause before the next attempt may help.
         

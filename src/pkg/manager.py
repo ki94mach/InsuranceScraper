@@ -152,3 +152,4 @@ class DataManager:
          }
         }
         wb_1.batch_update({"requests": [row_color_format]})
+        print(f"{self.website} google sheet is updated!")
