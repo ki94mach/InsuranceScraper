@@ -145,6 +145,7 @@ class WebScraper:
                 # Locate and click the search button
                 search_button = driver.find_element(By.ID, 'ctl00_ContentPlaceHolder1_btnSearch')
                 search_button.click()
+                time.sleep(3)
 
                 # Wait for the table to load
                 try:
@@ -201,4 +202,6 @@ class WebScraper:
                 print(f"Timeout encountered on attempt {attempt + 1} for code {code}. Refreshing and retrying...")
                 driver.refresh()  # Refresh the page before the next attempt.
                 time.sleep(3)  # A short pause before the next attempt may help.
+                self.wait.until(EC.element_to_be_clickable((By.ID, 'button-1181'))).click()
+                self.wait.until(EC.element_to_be_clickable((By.ID, 'cmbSrchSrvChgStatus-trigger-_trigger1'))).click()
         
