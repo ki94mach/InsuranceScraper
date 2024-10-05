@@ -6,7 +6,8 @@ from pkg.manager import  DataManager
 from pkg.tripleprice import TriplePrice 
 from pkg.scraper import WebScraper
 from pkg.processing import DataProcessing
-from pkg.khadamat_excel import data_store
+from pkg.khadamat import KhadamatData
+from pkg.mosallah import MosallahData
 def main():
     tp_object = TriplePrice()
     # Download triple price and save it in a DataFrame
@@ -17,33 +18,39 @@ def main():
 
     # Insurance websites
     websites = ['Mosallah', 'Khadamat', 'Taamin']
-    khadamat_excel = data_store()
+    khadamat = KhadamatData()
+    mosallah = MosallahData()
     while True:
         choice = input('''
             Please Select an Option:\n
             1. All\n
             2. Mossallah\n
             3. Khadamat\n
-            4. Taamin\n
-            5. Khadamat Excel\n
-            Enter your choice (1/2/3/4/5):\n
+            4. Taamin\n\n
+            5. Khadamat File\n
+            6. Mosallah File \n
+            Enter your choice (1/2/3/4/5/6):\n
             To exit enter Q\n
             ''')
         selected_websites = []
         if choice == "Q":
             break
         elif choice == '1':
-            khadamat_excel.run()
+            khadamat.run()
+            mosallah.run()
             selected_websites = websites
         elif choice == '2':
+            mosallah.run()
             selected_websites.append('Mosallah')
         elif choice == '3':
-            khadamat_excel.run()
+            khadamat.run()
             selected_websites.append('Khadamat')
         elif choice == '4':
             selected_websites.append('Taamin')
         elif choice == '5':
-            khadamat_excel.run()
+            khadamat.run()
+        elif choice == '6':
+            mosallah.run()
         else:
             print("Invalid choice. Please enter 1, 2, 3, or 4.")
             continue
