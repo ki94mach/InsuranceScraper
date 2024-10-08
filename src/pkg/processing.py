@@ -67,27 +67,30 @@ class DataProcessing:
                 self.insurance_df = pd.concat([self.insurance_df, row], ignore_index=True)
 
         elif self.website == "Mosallah":
-            column_header = [
-                'generic_code', 'generic_name', 'brand_name', 'dosage_form', 'price',
-                'date','insurance','midwife_prescription','gp_prescription','hospital',
-                'specialist','approval','reciever','maximum_prescribed','uid_register',
-                'pharmacy_is_authorize_to_approve','patient_per','special_patient_per',
-                'veteran_per',
-                ]
-            self.insurance_df = pd.DataFrame(columns=column_header)
-            # Find rows in the HTML and concatinate them in the final_df
-            for html_row in self.all_html:
-                soup = BeautifulSoup(html_row,'html.parser')
-                data = [td.text.strip() for td in soup.find_all('td')][:19]
-                row = pd.DataFrame([data], columns=column_header)
-                self.insurance_df = pd.concat([self.insurance_df, row], ignore_index=True)
-            # some generic_codes have "null" in petient_per so they don't have insurance coverage, 
-            # they should be removed from found_codes and added to notfound_codes and then removed from the dataframe
-            for index, row in self.insurance_df.iterrows():
-                if row['patient_per'] == 'null':
-                    self.not_found_codes.append(row['generic_code'])
-                    self.found_codes.remove(row['generic_code'])
-            self.insurance_df = self.insurance_df[self.insurance_df['patient_per'] != 'null']
+            # column_header = [
+            #     'generic_code', 'generic_name', 'brand_name', 'dosage_form', 'price',
+            #     'date','insurance','midwife_prescription','gp_prescription','hospital',
+            #     'specialist','approval','reciever','maximum_prescribed','uid_register',
+            #     'pharmacy_is_authorize_to_approve','patient_per','special_patient_per',
+            #     'veteran_per',
+            #     ]
+            # self.insurance_df = pd.DataFrame(columns=column_header)
+            # # Find rows in the HTML and concatinate them in the final_df
+            # for html_row in self.all_html:
+            #     soup = BeautifulSoup(html_row,'html.parser')
+            #     data = [td.text.strip() for td in soup.find_all('td')][:19]
+            #     row = pd.DataFrame([data], columns=column_header)
+            #     self.insurance_df = pd.concat([self.insurance_df, row], ignore_index=True)
+            # # some generic_codes have "null" in petient_per so they don't have insurance coverage, 
+            # # they should be removed from found_codes and added to notfound_codes and then removed from the dataframe
+            # for index, row in self.insurance_df.iterrows():
+            #     if row['patient_per'] == 'null':
+            #         self.not_found_codes.append(row['generic_code'])
+            #         self.found_codes.remove(row['generic_code'])
+            # self.insurance_df = self.insurance_df[self.insurance_df['patient_per'] != 'null']
+            mosallah_path = "data/Mosallah_file.csv"
+            df_record = pd.read_csv(mosallah_path)
+            
     def save_raw(self):
         """
         Saves raw data for history call checks

@@ -53,7 +53,7 @@ class MosallahData:
     def _processor(self):
             current_date = jdatetime.datetime.now().strftime('%Y/%m/%d')
             self.df_current['recorded_date'] = current_date
-            filename = 'data/Mosasllah_file.csv'
+            filename = 'data/Mosallah_file.csv'
             if os.path.exists(filename):
                 self.df_record = pd.read_csv(filename, encoding='utf-8')
             else:
@@ -67,10 +67,10 @@ class MosallahData:
                 variable_column = ['سريال تعرفه', 'recorded_date'] 
                 cols_to_check = [col for col in df_combined.columns if col not in variable_column]
                 df_deduplicated = df_combined.drop_duplicates(subset=cols_to_check, keep='first')
-                df_deduplicated.to_csv(filename, index=False, encoding='utf-8')
+                df_deduplicated.to_csv(filename, index=False, encoding='utf-8-sig')
                 print('Mosallah file updated successfully.')
             else:
-                self.df_current.to_csv(filename, index=False, encoding='utf-8')
+                self.df_current.to_csv(filename, index=False, encoding='utf-8-sig')
                 print(f'New data saved as {filename}.')
 
     def run(self):

@@ -1,7 +1,5 @@
-# Suppress the specific warning from openpyxl
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module='openpyxl')
-
 from pkg.manager import  DataManager
 from pkg.tripleprice import TriplePrice 
 from pkg.scraper import WebScraper
@@ -10,13 +8,8 @@ from pkg.khadamat import KhadamatData
 from pkg.mosallah import MosallahData
 def main():
     tp_object = TriplePrice()
-    # Download triple price and save it in a DataFrame
     triple_price_df = tp_object.download_file()
-
-    # generic codes as a list
     generic_codes = triple_price_df['generic_code']
-
-    # Insurance websites
     websites = ['Mosallah', 'Khadamat', 'Taamin']
     khadamat = KhadamatData()
     mosallah = MosallahData()

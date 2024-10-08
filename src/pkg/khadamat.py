@@ -107,18 +107,21 @@ class KhadamatData:
         if self.response.status_code == 200:
             content_type = self.response.headers.get('Content-Type', '').lower()
             if 'application/vnd.ms-excel' in content_type.lower() or 'application/x-msexcel' in content_type.lower():
-                self.df_current = pd.read_excel(BytesIO(self.response.content))
-                self.record_file = 'data/Khadamat_excel.xlsx'
-                if os.path.exists(self.record_file):
-                    self.df_record = pd.read_excel(self.record_file)
+                self.df_current = pd.read_excel(BytesIO(self.response.content), dtype='object')
+                self.df_current.drop(['Rx Code', 'FDA Code', 'ROW_COLOR'], axis=1, inplace=True)
+                self.df_current['recorded_date'] = self.current_date
+
+                record_file = 'data/Khadamat_file.csv'                
+                if os.path.exists(record_file):
+                    self.df_record = pd.read_csv(record_file, encoding='utf-8-sig', dtype='object')
                 else:
                     self.df_record = pd.DataFrame()
-                self.df_current['recorded_date'] = self.current_date
-                df_combined = pd.concat([self.df_record, self.df_current], ignore_index=True)
-                variable_column = ['رديف', 'recorded_date'] 
-                cols_to_check = [col for col in df_combined.columns if col not in variable_column]
-                df_deduplicated = df_combined.drop_duplicates(subset=cols_to_check, keep='first')
-                df_deduplicated.to_excel(self.record_file, index=False)
+                    
+                self.df_combined = pd.concat([self.df_record, self.df_current], ignore_index=True)
+                variable_cols = ['رديف', 'recorded_date']
+                cols_to_check = [col for col in self.df_combined.columns if col not in variable_cols]
+                self.df_deduplicated = self.df_combined.drop_duplicates(subset=cols_to_check, keep='first')
+                self.df_deduplicated.to_csv(record_file, index=False, encoding='utf-8-sig')
                 print('Khadamat excel file updated successfully.')
             else:
                 print('Response is not an Excel file. Content-Type:', content_type)

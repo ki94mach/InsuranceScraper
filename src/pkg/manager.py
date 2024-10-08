@@ -59,6 +59,9 @@ class DataManager:
             self.insurance_update.drop(columns=['درصد بیمه (خدمات درمانی)', 'مبنای پرداختی بیمه (خدمات درمانی)'], inplace=True)
 
         elif self.website == "Mosallah":
+            mosallah_path = "data/Mosallah_file.csv"
+            df_record = pd.read_csv(mosallah_path)
+            
             final_df = self.insurance_df.merge(self.triple_price_df[
                 ['generic_code', 'نام کالا', 'درصد بیمه (نیروهای مسلح)', 'مبنای پرداختی بیمه (نیروهای مسلح)']],
                 on='generic_code', how='left')
