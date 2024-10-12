@@ -5,6 +5,7 @@ import pandas as pd
 from io import BytesIO
 import os
 import jdatetime
+import csv
 class KhadamatData:
     def __init__(self):
         self.current_date = jdatetime.datetime.now().strftime('%Y/%m/%d')
@@ -110,6 +111,8 @@ class KhadamatData:
                 self.df_current = pd.read_excel(BytesIO(self.response.content), dtype='object')
                 self.df_current.drop(['Rx Code', 'FDA Code', 'ROW_COLOR'], axis=1, inplace=True)
                 self.df_current['recorded_date'] = self.current_date
+                self.df_current.replace({'%': ''}, regex=True, inplace=True)
+                # self.df_current = self.df_current.applymap(lambda x: x.strip() if isinstance(x, str) else x)
 
                 record_file = 'data/Khadamat_file.csv'                
                 if os.path.exists(record_file):
@@ -121,7 +124,7 @@ class KhadamatData:
                 variable_cols = ['رديف', 'recorded_date']
                 cols_to_check = [col for col in self.df_combined.columns if col not in variable_cols]
                 self.df_deduplicated = self.df_combined.drop_duplicates(subset=cols_to_check, keep='first')
-                self.df_deduplicated.to_csv(record_file, index=False, encoding='utf-8-sig')
+                self.df_deduplicated.to_csv(record_file, index=False, encoding='utf-8-sig', quoting=csv.QUOTE_ALL)
                 print('Khadamat excel file updated successfully.')
             else:
                 print('Response is not an Excel file. Content-Type:', content_type)

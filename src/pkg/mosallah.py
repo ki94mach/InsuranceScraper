@@ -7,6 +7,7 @@ from datetime import datetime
 from urllib.parse import unquote
 import pandas as pd
 import jdatetime
+import csv
 
 class MosallahData:
     def __init__(self):       
@@ -67,7 +68,7 @@ class MosallahData:
                 variable_column = ['سريال تعرفه', 'recorded_date'] 
                 cols_to_check = [col for col in df_combined.columns if col not in variable_column]
                 df_deduplicated = df_combined.drop_duplicates(subset=cols_to_check, keep='first')
-                df_deduplicated.to_csv(filename, index=False, encoding='utf-8-sig')
+                df_deduplicated.to_csv(filename, index=False, encoding='utf-8-sig', quoting=csv.QUOTE_ALL)
                 print('Mosallah file updated successfully.')
             else:
                 self.df_current.to_csv(filename, index=False, encoding='utf-8-sig')

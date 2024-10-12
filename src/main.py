@@ -10,7 +10,7 @@ def main():
     tp_object = TriplePrice()
     triple_price_df = tp_object.download_file()
     generic_codes = triple_price_df['generic_code']
-    websites = ['Mosallah', 'Khadamat', 'Taamin']
+    websites = ['Khadamat', 'Taamin']
     khadamat = KhadamatData()
     mosallah = MosallahData()
     while True:

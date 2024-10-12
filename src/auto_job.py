@@ -25,7 +25,6 @@ def main():
     processor.parser()
     processor.save_raw()
     insurance_df = processor.clean_data()
-    # processor.code_count()
     manager = DataManager(website, insurance_df, triple_price_df)
     manager.storage()
     insurance_update = manager.analysis()

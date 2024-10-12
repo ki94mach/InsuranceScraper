@@ -2,6 +2,7 @@ import pandas as pd
 import gspread
 from gspread_formatting import *
 import string
+import csv
 class DataManager:
     def __init__(self, website: str, insurance_df: pd.DataFrame, triple_price_df: pd.DataFrame):
         self.website = website
@@ -31,7 +32,7 @@ class DataManager:
             .reset_index(drop=True)
             )
         # writing the data to main csv file (still not overwritting)
-        insurance_total_df.to_csv(data_dir, index=False, encoding='utf-8')
+        insurance_total_df.to_csv(data_dir, index=False, encoding='utf-8', quoting=csv.QUOTE_ALL)
     def analysis(self):
         """
         Compares the scraped data with triple price to find generic codes that need to be updated in triple price
