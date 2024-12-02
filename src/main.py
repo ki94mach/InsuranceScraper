@@ -5,14 +5,14 @@ from pkg.tripleprice import TriplePrice
 from pkg.scraper import WebScraper
 from pkg.processing import DataProcessing
 from pkg.khadamat import KhadamatData
-from pkg.mosallah import MosallahData
+# from pkg.mosallah import MosallahData
 def main():
     tp_object = TriplePrice()
     triple_price_df = tp_object.download_file()
     generic_codes = triple_price_df['generic_code']
     websites = ['Khadamat', 'Taamin']
     khadamat = KhadamatData()
-    mosallah = MosallahData()
+    # mosallah = MosallahData()
     while True:
         choice = input('''
             Please Select an Option:\n
@@ -30,11 +30,11 @@ def main():
             break
         elif choice == '1':
             khadamat.run()
-            mosallah.run()
+            # mosallah.run()
             selected_websites = websites
-        elif choice == '2':
-            mosallah.run()
-            selected_websites.append('Mosallah')
+        # elif choice == '2':
+        #     mosallah.run()
+        #     selected_websites.append('Mosallah')
         elif choice == '3':
             khadamat.run()
             selected_websites.append('Khadamat')
@@ -42,8 +42,8 @@ def main():
             selected_websites.append('Taamin')
         elif choice == '5':
             khadamat.run()
-        elif choice == '6':
-            mosallah.run()
+        # elif choice == '6':
+        #     mosallah.run()
         else:
             print("Invalid choice. Please enter 1, 2, 3, or 4.")
             continue

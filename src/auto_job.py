@@ -5,14 +5,14 @@ from pkg.tripleprice import TriplePrice
 from pkg.scraper import WebScraper
 from pkg.processing import DataProcessing
 from pkg.khadamat import KhadamatData
-from pkg.mosallah import MosallahData
+# from pkg.mosallah import MosallahData
 
 def main():
     khadamat = KhadamatData()
     khadamat.run()
 
-    mosallah = MosallahData()
-    mosallah.run()
+    # mosallah = MosallahData()
+    # mosallah.run()
 
     tp_object = TriplePrice()
     triple_price_df = tp_object.download_file()

@@ -11,7 +11,7 @@ import csv
 
 class MosallahData:
     def __init__(self):       
-        self.webpage_url = 'https://esata.ir/%D8%AA%D8%B9%D8%B1%D9%81%D9%87-%D8%AF%D8%A7%D8%B1%D9%88%DB%8C%DB%8C'
+        self.webpage_url = 'https://esata.ir/node/47514'
         self.session = requests.Session()
 
     def _file_finder(self):
@@ -21,19 +21,35 @@ class MosallahData:
             links = soup.find_all('a', href=True)
             latest_file_url = None
             latest_date = None
-            pattern = re.compile(r'.*list daro.*\.csv$', re.IGNORECASE)
+            # Adjusted regex pattern to match filenames ending with a date in DD-MM-YYYY.csv format
+            pattern = re.compile(r'.*(\d{2}-\d{2}-\d{4})*\.csv$', re.IGNORECASE)
             for link in links:
                 href = link['href']
                 href_decoded = unquote(href)
-                if pattern.match(href_decoded):
-                    date_match = re.search(r'(\d{4}-\d{2}-\d{2})', href_decoded)
-                    if date_match:
-                        file_date_str = date_match.group(1)
-                        file_date = datetime.strptime(file_date_str, '%Y-%m-%d')
-                        if latest_date is None or file_date > latest_date:
-                            return href
+                match = pattern.match(href_decoded)
+                if match:
+                    # Extract the date from the filename
+                    file_date_str = match.group(1)  # e.g., '01-08-1403'
+                    # Split the date into day, month, and year
+                    date_parts = file_date_str.split('-')
+                    if len(date_parts) == 3:
+                        day, month, year = int(date_parts[0]), int(date_parts[1]), int(date_parts[2])
+                        # Create a jdatetime.date object (Solar Hijri date)
+                        try:
+                            file_date_shamsi = jdatetime.date(year, month, day)
+                            # Convert to Gregorian date for comparison
+                            gregorian_date = file_date_shamsi.togregorian()
+                            # Update the latest file URL if this file is newer
+                            if latest_date is None or gregorian_date > latest_date:
+                                latest_date = gregorian_date
+                                latest_file_url = href
+                        except ValueError as e:
+                            print(f"Invalid date in filename: {file_date_str}")
+                            continue
         else:
-            print(f'Failed to connect to Estada.ir . Status code: {response.status_code}')
+            print(f'Failed to connect to esata.ir. Status code: {response.status_code}')
+            return None  # Return None if connection failed
+        return latest_file_url
                     
     def _downloader(self):
         latest_file_url = self._file_finder()
