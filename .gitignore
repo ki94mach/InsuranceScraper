@@ -2,3 +2,4 @@ src/data
 src/pkg/tripleprice
 src/geckodriver.log
 src/SSIS
+src/test.ipynb
