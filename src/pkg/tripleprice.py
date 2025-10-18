@@ -1,5 +1,7 @@
 import pandas as pd
 import requests
+from io import BytesIO
+
 class TriplePrice():
 
     def download_file(self):
@@ -31,10 +33,10 @@ class TriplePrice():
             'W': 'float64', 'X': 'int64', 'Z': 'float64',
             'AA': 'str'
             }
-
+        excel_data = BytesIO(content)
         # Processing the data
         triple_price = pd.read_excel(
-            content, sheet_name=0, dtype=types, header=None,
+            excel_data, sheet_name=1, dtype=types, header=None,
             nrows=None, usecols=columns, skiprows=3
             )
         triple_price = (triple_price.rename(columns=triple_price.iloc[0])

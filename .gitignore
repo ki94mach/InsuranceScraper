@@ -3,3 +3,6 @@ src/pkg/tripleprice
 src/geckodriver.log
 src/SSIS
 src/test.ipynb
+*/__pycache__/
+*.pyc
+geckodriver.log
