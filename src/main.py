@@ -1,7 +1,56 @@
 import os
+import sys
 import jdatetime
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module='openpyxl')
+
+# Optional: use DistCore terminal_ui for colored CLI (path to DistCore/src so "orchestrator" is importable)
+_DISTCORE_SRC = os.environ.get("DISTCORE_SRC") or os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..", "DistCore", "src")
+)
+if os.path.isdir(_DISTCORE_SRC) and _DISTCORE_SRC not in sys.path:
+    sys.path.insert(0, _DISTCORE_SRC)
+try:
+    from orchestrator.ui import (  # type: ignore[import-not-found]
+        Colors,
+        print_action,
+        print_error,
+        print_header,
+        print_info,
+        print_menu_item,
+        print_prompt,
+        print_success,
+        print_warning,
+    )
+    _USE_TERMINAL_UI = True
+except ImportError:
+    _USE_TERMINAL_UI = False
+    Colors = None
+
+    def print_header(text, color=None, width=60):
+        print("\n" + "=" * width + "\n  " + text + "\n" + "=" * width)
+
+    def print_success(text):
+        print("[OK] " + text)
+
+    def print_error(text):
+        print("[X] " + text)
+
+    def print_warning(text):
+        print("[!] " + text)
+
+    def print_info(text):
+        print("[i] " + text)
+
+    def print_action(text):
+        print("-> " + text)
+
+    def print_menu_item(key, text, color=None):
+        print(f"  {key}. {text}")
+
+    def print_prompt(text):
+        return input(text)
+
 from pkg.manager import DataManager
 from pkg.tripleprice import TriplePrice
 from pkg.scraper import WebScraper
@@ -46,42 +95,44 @@ def load_generic_codes_from_csv(path: str = None) -> list:
     return codes
 
 
+def _menu_color(c):
+    return c if _USE_TERMINAL_UI else None
+
+
 def print_menu():
-    print("\n" + "=" * 50)
-    print("  Insurance Scraper")
-    print("=" * 50)
-    print("\nRoutine (Dropbox + history + Google Sheet):")
-    print("  1. All (Khadamat + Taamin)")
-    print("  2. Khadamat only")
-    print("  3. Taamin only")
-    print("\nUtility:")
-    print("  4. Khadamat File only")
-    print("\nBatch (CSV codes → data/batch/<jalali_date>/):")
-    print("  5. Batch scrape (choose Khadamat / Taamin / Both)")
-    print("\n  Q. Quit")
-    print("-" * 50)
+    print_header("Insurance Scraper", color=_menu_color(Colors.CYAN) if Colors else None)
+    print_info("Routine (Dropbox + history + Google Sheet):")
+    print_menu_item("1", "All (Khadamat + Taamin)", _menu_color(Colors.BRIGHT_WHITE) if Colors else None)
+    print_menu_item("2", "Khadamat only", _menu_color(Colors.WHITE) if Colors else None)
+    print_menu_item("3", "Taamin only", _menu_color(Colors.WHITE) if Colors else None)
+    print_info("Utility:")
+    print_menu_item("4", "Khadamat File only", _menu_color(Colors.WHITE) if Colors else None)
+    print_info("Batch (CSV codes → data/batch/<jalali_date>/):")
+    print_menu_item("5", "Batch scrape (choose Khadamat / Taamin / Both)", _menu_color(Colors.BRIGHT_WHITE) if Colors else None)
+    print_menu_item("Q", "Quit", _menu_color(Colors.BRIGHT_YELLOW) if Colors else None)
+    print()
 
 
 def batch_choose_websites() -> list:
     """Let user choose which websites to run for batch scraping."""
     while True:
-        print("\nBatch: which sources to scrape?")
-        print("  1. Khadamat only")
-        print("  2. Taamin only")
-        print("  3. Both (Khadamat + Taamin)")
-        sub = input("Choice [1/2/3]: ").strip()
+        print_info("Batch: which sources to scrape?")
+        print_menu_item("1", "Khadamat only", _menu_color(Colors.WHITE) if Colors else None)
+        print_menu_item("2", "Taamin only", _menu_color(Colors.WHITE) if Colors else None)
+        print_menu_item("3", "Both (Khadamat + Taamin)", _menu_color(Colors.WHITE) if Colors else None)
+        sub = print_prompt("Choice [1/2/3]: ").strip()
         if sub == "1":
             return ["Khadamat"]
         if sub == "2":
             return ["Taamin"]
         if sub == "3":
             return WEBSITES.copy()
-        print("Invalid. Enter 1, 2, or 3.")
+        print_error("Invalid. Enter 1, 2, or 3.")
 
 
 def run_scraping(website: str, generic_codes, output_dir, batch_mode: bool, batch_timestamp: str, triple_price_df):
     """Run scraper + processing + storage for one website."""
-    print(f"Running {website}...")
+    print_action(f"Running {website}...")
     scraper = WebScraper(website, generic_codes)
     all_html, found_codes, not_found_codes = scraper.run_crawler()
     processor = DataProcessing(
@@ -108,14 +159,14 @@ def run_scraping(website: str, generic_codes, output_dir, batch_mode: bool, batc
         manager.analysis()
         manager.google_sheet_update()
     elif output_dir and batch_timestamp:
-        print(f"  → {os.path.join(output_dir, f'batch_{website}Data_{batch_timestamp}.csv')}")
+        print_action(os.path.join(output_dir, f"batch_{website}Data_{batch_timestamp}.csv"))
 
 
 def main():
     khadamat = KhadamatData()
     while True:
         print_menu()
-        choice = input("Choice: ").strip().upper()
+        choice = print_prompt("Choice: ").strip().upper()
         if choice == "Q":
             break
 
@@ -157,14 +208,14 @@ def main():
             try:
                 generic_codes = load_generic_codes_from_csv()
             except (FileNotFoundError, ValueError) as e:
-                print(e)
+                print_error(str(e))
                 continue
-            print(f"Loaded {len(generic_codes)} generic codes from {BATCH_GENERIC_CODES_PATH}")
+            print_success(f"Loaded {len(generic_codes)} generic codes from {BATCH_GENERIC_CODES_PATH}")
             selected_websites = batch_choose_websites()
             batch_mode = True
 
         else:
-            print("Invalid choice. Enter 1–5 or Q.")
+            print_error("Invalid choice. Enter 1–5 or Q.")
             continue
 
         # Set output dir and batch timestamp for batch mode
