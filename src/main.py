@@ -7,13 +7,14 @@ from pkg.tripleprice import TriplePrice
 from pkg.scraper import WebScraper
 from pkg.processing import DataProcessing
 from pkg.khadamat import KhadamatData
-# from pkg.mosallah import MosallahData
 
 # Data directory is under src (same folder as main.py)
 _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(_SCRIPT_DIR, "data")
 BATCH_DIR = os.path.join(_DATA_DIR, "batch")
 BATCH_GENERIC_CODES_PATH = os.path.join(BATCH_DIR, "generic_codes.csv")
+
+WEBSITES = ["Khadamat", "Taamin"]
 
 
 def load_generic_codes_from_csv(path: str = None) -> list:
@@ -45,95 +46,142 @@ def load_generic_codes_from_csv(path: str = None) -> list:
     return codes
 
 
-def main():
-    websites = ['Khadamat', 'Taamin']
-    khadamat = KhadamatData()
-    # mosallah = MosallahData()
+def print_menu():
+    print("\n" + "=" * 50)
+    print("  Insurance Scraper")
+    print("=" * 50)
+    print("\nRoutine (Dropbox + history + Google Sheet):")
+    print("  1. All (Khadamat + Taamin)")
+    print("  2. Khadamat only")
+    print("  3. Taamin only")
+    print("\nUtility:")
+    print("  4. Khadamat File only")
+    print("\nBatch (CSV codes → data/batch/<jalali_date>/):")
+    print("  5. Batch scrape (choose Khadamat / Taamin / Both)")
+    print("\n  Q. Quit")
+    print("-" * 50)
+
+
+def batch_choose_websites() -> list:
+    """Let user choose which websites to run for batch scraping."""
     while True:
-        choice = input('''
-            Please Select an Option:\n
-            1. All\n
-            2. Mossallah\n
-            3. Khadamat\n
-            4. Taamin\n\n
-            5. Khadamat File\n
-            6. Mosallah File\n
-            7. Batch (generic codes from CSV – save to data/batch)\n
-            Enter your choice (1/2/3/4/5/6/7):\n
-            To exit enter Q\n
-            ''')
-        selected_websites = []
-        batch_mode = False
+        print("\nBatch: which sources to scrape?")
+        print("  1. Khadamat only")
+        print("  2. Taamin only")
+        print("  3. Both (Khadamat + Taamin)")
+        sub = input("Choice [1/2/3]: ").strip()
+        if sub == "1":
+            return ["Khadamat"]
+        if sub == "2":
+            return ["Taamin"]
+        if sub == "3":
+            return WEBSITES.copy()
+        print("Invalid. Enter 1, 2, or 3.")
+
+
+def run_scraping(website: str, generic_codes, output_dir, batch_mode: bool, batch_timestamp: str, triple_price_df):
+    """Run scraper + processing + storage for one website."""
+    print(f"Running {website}...")
+    scraper = WebScraper(website, generic_codes)
+    all_html, found_codes, not_found_codes = scraper.run_crawler()
+    processor = DataProcessing(
+        website, generic_codes, all_html, found_codes, not_found_codes,
+        output_dir=output_dir,
+    )
+    processor.parser()
+    if not batch_mode:
+        processor.save_raw()
+    insurance_df = processor.clean_data()
+    manager_tp = (
+        triple_price_df
+        if triple_price_df is not None
+        else insurance_df[["generic_code"]].drop_duplicates()
+    )
+    manager = DataManager(
+        website, insurance_df, manager_tp,
+        output_dir=output_dir,
+        batch_mode=batch_mode,
+        batch_timestamp=batch_timestamp,
+    )
+    manager.storage()
+    if not batch_mode:
+        manager.analysis()
+        manager.google_sheet_update()
+    elif output_dir and batch_timestamp:
+        print(f"  → {os.path.join(output_dir, f'batch_{website}Data_{batch_timestamp}.csv')}")
+
+
+def main():
+    khadamat = KhadamatData()
+    while True:
+        print_menu()
+        choice = input("Choice: ").strip().upper()
         if choice == "Q":
             break
-        elif choice == '7':
-            batch_mode = True
+
+        selected_websites = []
+        batch_mode = False
+        triple_price_df = None
+        generic_codes = None
+
+        if choice == "1":
+            # Routine: All
+            khadamat.run()
+            selected_websites = WEBSITES.copy()
+            tp_object = TriplePrice()
+            triple_price_df = tp_object.download_file()
+            generic_codes = triple_price_df["generic_code"]
+
+        elif choice == "2":
+            # Routine: Khadamat only
+            khadamat.run()
+            selected_websites = ["Khadamat"]
+            tp_object = TriplePrice()
+            triple_price_df = tp_object.download_file()
+            generic_codes = triple_price_df["generic_code"]
+
+        elif choice == "3":
+            # Routine: Taamin only
+            selected_websites = ["Taamin"]
+            tp_object = TriplePrice()
+            triple_price_df = tp_object.download_file()
+            generic_codes = triple_price_df["generic_code"]
+
+        elif choice == "4":
+            # Utility: Khadamat File only
+            khadamat.run()
+            continue
+
+        elif choice == "5":
+            # Batch: load codes from CSV, then choose Khadamat / Taamin / Both
             try:
                 generic_codes = load_generic_codes_from_csv()
             except (FileNotFoundError, ValueError) as e:
                 print(e)
                 continue
             print(f"Loaded {len(generic_codes)} generic codes from {BATCH_GENERIC_CODES_PATH}")
-            selected_websites = websites
-            triple_price_df = None
-        elif choice == '1':
-            khadamat.run()
-            selected_websites = websites
-            tp_object = TriplePrice()
-            triple_price_df = tp_object.download_file()
-            generic_codes = triple_price_df['generic_code']
-        # elif choice == '2':
-        #     mosallah.run()
-        #     selected_websites.append('Mosallah')
-        elif choice == '3':
-            khadamat.run()
-            selected_websites.append('Khadamat')
-            tp_object = TriplePrice()
-            triple_price_df = tp_object.download_file()
-            generic_codes = triple_price_df['generic_code']
-        elif choice == '4':
-            selected_websites.append('Taamin')
-            tp_object = TriplePrice()
-            triple_price_df = tp_object.download_file()
-            generic_codes = triple_price_df['generic_code']
-        elif choice == '5':
-            khadamat.run()
-            continue
-        # elif choice == '6':
-        #     mosallah.run()
-        #     continue
+            selected_websites = batch_choose_websites()
+            batch_mode = True
+
         else:
-            print("Invalid choice. Please enter 1, 2, 3, 4, 5, 6, or 7.")
+            print("Invalid choice. Enter 1–5 or Q.")
             continue
 
-        # Batch: output under data/batch/<jalali_today>/; filenames use Jalali date only (no time)
+        # Set output dir and batch timestamp for batch mode
         if batch_mode:
             jalali_today = jdatetime.datetime.now().strftime("%Y-%m-%d")
             output_dir = os.path.join(BATCH_DIR, jalali_today)
-            batch_timestamp = jalali_today  # Jalali date only in filename, e.g. batch_KhadamatData_1403-11-19.csv
+            batch_timestamp = jalali_today
         else:
             output_dir = None
             batch_timestamp = None
+
         for website in selected_websites:
-            print(f"Running operations for {website}...")
-            scraper = WebScraper(website, generic_codes)
-            all_html, found_codes, not_found_codes = scraper.run_crawler()
-            processor = DataProcessing(
-                website, generic_codes, all_html, found_codes, not_found_codes,
-                output_dir=output_dir,
+            run_scraping(
+                website, generic_codes, output_dir,
+                batch_mode, batch_timestamp, triple_price_df,
             )
-            processor.parser()
-            if not batch_mode:
-                processor.save_raw()
-            insurance_df = processor.clean_data()
-            # Dummy triple_price_df for batch (only storage is used; no triple-price columns needed)
-            manager_tp = triple_price_df if triple_price_df is not None else insurance_df[["generic_code"]].drop_duplicates()
-            manager = DataManager(website, insurance_df, manager_tp, output_dir=output_dir, batch_mode=batch_mode, batch_timestamp=batch_timestamp)
-            manager.storage()
-            if not batch_mode:
-                insurance_update = manager.analysis()
-                manager.google_sheet_update()
-            else:
-                print(f"Batch results for {website} saved to {os.path.join(output_dir, f'batch_{website}Data_{batch_timestamp}.csv')}")
+
+
 if __name__ == "__main__":
     main()
