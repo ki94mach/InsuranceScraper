@@ -4,17 +4,35 @@ from gspread_formatting import *
 import string
 import csv
 class DataManager:
-    def __init__(self, website: str, insurance_df: pd.DataFrame, triple_price_df: pd.DataFrame):
+    def __init__(self, website: str, insurance_df: pd.DataFrame, triple_price_df: pd.DataFrame, output_dir: str = None, batch_mode: bool = False, batch_timestamp: str = None):
         self.website = website
         self.insurance_df = insurance_df
         self.triple_price_df = triple_price_df
+        self.output_dir = output_dir  # when set (e.g. data/batch), save mined data there only, no history merge
+        self.batch_mode = batch_mode
+        self.batch_timestamp = batch_timestamp  # e.g. "2025-02-08_14-30-22" for consistent batch filenames
 
     def storage(self):
         """
-        Storing the new data in the csv file for history call
+        Storing the new data in the csv file for history call.
+        When output_dir is set (batch mode), saves only current run to that directory, no merge with history.
+        Batch files are named batch_WebsiteData_YYYY-MM-DD_HH-MM-SS.csv.
         """
-        data_dir = f"data/{self.website}Data.csv"
-        # importing the historical data into a dataframe (if the data type is not determined, drop duplicate won't work)
+        import os
+        base_dir = self.output_dir if self.output_dir else "data"
+        if self.output_dir and self.batch_mode and self.batch_timestamp:
+            filename = f"batch_{self.website}Data_{self.batch_timestamp}.csv"
+        elif self.output_dir and self.batch_mode:
+            filename = f"batch_{self.website}Data.csv"
+        else:
+            filename = f"{self.website}Data.csv"
+        data_dir = os.path.join(base_dir, filename)
+        if self.output_dir:
+            # Batch mode: save only current run to output_dir, no history
+            os.makedirs(base_dir, exist_ok=True)
+            self.insurance_df.to_csv(data_dir, index=False, encoding='utf-8', quoting=csv.QUOTE_ALL)
+            return
+        # Routine: merge with history
         history_df = pd.read_csv(data_dir, dtype={
             'generic_code':'object','price':'float64',
             'coverage':'float64', 'subsidy':'float64'}

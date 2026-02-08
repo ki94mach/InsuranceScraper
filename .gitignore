@@ -6,3 +6,4 @@ src/test.ipynb
 */__pycache__/
 *.pyc
 geckodriver.log
+*/data/*

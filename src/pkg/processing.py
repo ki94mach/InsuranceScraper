@@ -3,14 +3,18 @@ import pandas as pd
 import jdatetime
 import os
 import csv
+from typing import Optional
+
+
 class DataProcessing:
-    def __init__(self , website: str,generic_codes: list, all_html: list, found_codes: list, not_found_codes: list):
+    def __init__(self, website: str, generic_codes: list, all_html: list, found_codes: list, not_found_codes: list, output_dir: Optional[str] = None):
         self.generic_codes = generic_codes
         self.website = website
         self.all_html = all_html
         self.found_codes = found_codes
         self.not_found_codes = not_found_codes
         self.current_date = jdatetime.datetime.now().strftime('%Y/%m/%d')
+        self.output_dir = output_dir  # e.g. "data/batch" for batch runs; None = routine (data/)
     
     def parser(self):
         """
@@ -93,9 +97,12 @@ class DataProcessing:
             
     def save_raw(self):
         """
-        Saves raw data for history call checks
+        Saves raw data for history call checks.
+        If output_dir is set (e.g. data/batch), saves there instead of data/.
         """
-        raw_path = f"data/{self.website}_raw.csv"
+        base_dir = self.output_dir if self.output_dir else "data"
+        os.makedirs(base_dir, exist_ok=True)
+        raw_path = os.path.join(base_dir, f"{self.website}_raw.csv")
         if not os.path.exists(raw_path):
             with open(raw_path, "w", newline='') as file:
                 writer = csv.writer(file)
@@ -131,6 +138,10 @@ class DataProcessing:
             # Generate a generic_name colum from aoi, dosage_form and str collumn
             self.insurance_df['generic_name'] = self.insurance_df['api'] + " " + self.insurance_df['dosage_form'] + " " + self.insurance_df['str']
             self.insurance_df['change_date_2'] = self.insurance_df['change_date_2'].fillna(self.insurance_df['date'])
+            # Ensure optional coverage_per_2, coverage_per_3 exist (parser only creates them when cell has <br>)
+            for c in ['coverage_per_2', 'coverage_per_3']:
+                if c not in self.insurance_df.columns:
+                    self.insurance_df[c] = 0
             # remove unwanted columns
             self.insurance_df = self.insurance_df[[
                 'generic_code','generic_name','change_date_2','price',
