@@ -7,3 +7,4 @@ src/test.ipynb
 *.pyc
 geckodriver.log
 */data/*
+*.zip
