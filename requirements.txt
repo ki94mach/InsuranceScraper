@@ -3,6 +3,7 @@ beautifulsoup4>=4.12.2
 pandas>=2.0.3
 jdatetime>=4.1.1
 requests>=2.31.0
+requests-ntlm>=1.2.0
 gspread>=5.12.4
 gspread-formatting>=1.1.2
 selenium>=3.141.0
