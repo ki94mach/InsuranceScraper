@@ -7,12 +7,22 @@ from typing import Optional
 
 
 class DataProcessing:
-    def __init__(self, website: str, generic_codes: list, all_html: list, found_codes: list, not_found_codes: list, output_dir: Optional[str] = None):
+    def __init__(
+        self,
+        website: str,
+        generic_codes: list,
+        all_html: list,
+        found_codes: list,
+        not_found_codes: list,
+        output_dir: Optional[str] = None,
+        retry_mode: bool = False,
+    ):
         self.generic_codes = generic_codes
         self.website = website
         self.all_html = all_html
         self.found_codes = found_codes
         self.not_found_codes = not_found_codes
+        self.retry_mode = retry_mode
         self.current_date = jdatetime.datetime.now().strftime('%Y/%m/%d')
         self.output_dir = output_dir  # e.g. "data/batch" for batch runs; None = routine (data/)
     
@@ -220,15 +230,17 @@ class DataProcessing:
             # remove patient_per column
             self.insurance_df.drop(columns=['patient_per'], inplace=True)
 
-        # Create a DataFrame from not_found_codes with price and coverage set to zero
-        not_found_df = pd.DataFrame({
-            'generic_code': self.not_found_codes,
-            'price': [0] * len(self.not_found_codes),
-            'coverage': [0] * len(self.not_found_codes),
-            'date': [self.current_date] * len(self.not_found_codes)
-        })
-        # Concatenate the new DataFrame with the existing one
-        self.insurance_df = pd.concat([self.insurance_df, not_found_df], ignore_index=True).reset_index(drop=True)
+        # In retry mode, do not add 0/0 placeholders (they would pollute history and the sheet).
+        if not self.retry_mode and self.not_found_codes:
+            not_found_df = pd.DataFrame({
+                'generic_code': self.not_found_codes,
+                'price': [0] * len(self.not_found_codes),
+                'coverage': [0] * len(self.not_found_codes),
+                'date': [self.current_date] * len(self.not_found_codes)
+            })
+            self.insurance_df = pd.concat(
+                [self.insurance_df, not_found_df], ignore_index=True
+            ).reset_index(drop=True)
 
         if self.insurance_df.duplicated(subset=["generic_code"]).any():
             duplicates = self.insurance_df[self.insurance_df.duplicated(subset=['generic_code'])]

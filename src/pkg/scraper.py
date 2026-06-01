@@ -12,7 +12,9 @@ class WebScraper:
         self.generic_codes = generic_codes
         self.wait = WebDriverWait(self.driver, 20)
         self.max_attempts = 3
-        self.all_tables_html, self.found_codes, self.notfound_codes = ([] for i in range(3))
+        self.all_tables_html, self.found_codes, self.notfound_codes, self.timeout_codes = (
+            [] for _ in range(4)
+        )
 
 
     def run_crawler(self) -> list:
@@ -159,6 +161,9 @@ class WebScraper:
                 print(f"Timeout encountered on attempt {attempt + 1} for code {code}. Refreshing and retrying...")
                 driver.refresh()  # Refresh the page before the next attempt.
                 time.sleep(3)  # A short pause before the next attempt may help.
+        self.timeout_codes.append(str(code).zfill(5))
+        return None
+
     def _khadamat_crawler(self, driver: webdriver.Firefox, code: int) -> str:
         """
         Crawls the taamin website for every genric code

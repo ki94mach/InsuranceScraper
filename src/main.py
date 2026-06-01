@@ -56,12 +56,14 @@ from pkg.tripleprice import TriplePrice
 from pkg.scraper import WebScraper
 from pkg.processing import DataProcessing
 from pkg.khadamat import KhadamatData
+from pkg.retry_codes import load_retry_codes, save_retry_codes
 
 # Data directory is under src (same folder as main.py)
 _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(_SCRIPT_DIR, "data")
 BATCH_DIR = os.path.join(_DATA_DIR, "batch")
 BATCH_GENERIC_CODES_PATH = os.path.join(BATCH_DIR, "generic_codes.csv")
+RETRY_DIR = os.path.join(_DATA_DIR, "retry")
 
 WEBSITES = ["Khadamat", "Taamin"]
 
@@ -109,6 +111,8 @@ def print_menu():
     print_menu_item("4", "Khadamat File only", _menu_color(Colors.WHITE) if Colors else None)
     print_info("Batch (CSV codes → data/batch/<jalali_date>/):")
     print_menu_item("5", "Batch scrape (choose Khadamat / Taamin / Both)", _menu_color(Colors.BRIGHT_WHITE) if Colors else None)
+    print_info("Retry (failed timeouts only — does not overwrite good rows):")
+    print_menu_item("6", "Retry failed codes (from data/retry/*_failed_codes.csv)", _menu_color(Colors.BRIGHT_WHITE) if Colors else None)
     print_menu_item("Q", "Quit", _menu_color(Colors.BRIGHT_YELLOW) if Colors else None)
     print()
 
@@ -130,19 +134,41 @@ def batch_choose_websites() -> list:
         print_error("Invalid. Enter 1, 2, or 3.")
 
 
-def run_scraping(website: str, generic_codes, output_dir, batch_mode: bool, batch_timestamp: str, triple_price_df):
+def run_scraping(
+    website: str,
+    generic_codes,
+    output_dir,
+    batch_mode: bool,
+    batch_timestamp: str,
+    triple_price_df,
+    retry_mode: bool = False,
+):
     """Run scraper + processing + storage for one website."""
-    print_action(f"Running {website}...")
+    label = f"Retry {website}" if retry_mode else website
+    print_action(f"Running {label}...")
     scraper = WebScraper(website, generic_codes)
     all_html, found_codes, not_found_codes = scraper.run_crawler()
     processor = DataProcessing(
         website, generic_codes, all_html, found_codes, not_found_codes,
         output_dir=output_dir,
+        retry_mode=retry_mode,
     )
     processor.parser()
     if not batch_mode:
         processor.save_raw()
     insurance_df = processor.clean_data()
+    if scraper.timeout_codes:
+        still_failed = save_retry_codes(scraper.timeout_codes, website)
+        msg = (
+            f"{len(scraper.timeout_codes)} code(s) still timed out. Saved to: {still_failed}"
+            if retry_mode
+            else f"{len(scraper.timeout_codes)} code(s) timed out. Saved for menu 6: {still_failed}"
+        )
+        print_warning(msg)
+    elif retry_mode:
+        save_retry_codes([], website)
+        print_success(f"All retried {website} codes succeeded; cleared retry list.")
+
     manager_tp = (
         triple_price_df
         if triple_price_df is not None
@@ -153,6 +179,9 @@ def run_scraping(website: str, generic_codes, output_dir, batch_mode: bool, batc
         output_dir=output_dir,
         batch_mode=batch_mode,
         batch_timestamp=batch_timestamp,
+        retry_mode=retry_mode,
+        retry_codes=list(generic_codes) if retry_mode else None,
+        retry_date=processor.current_date if retry_mode else None,
     )
     manager.storage()
     if not batch_mode:
@@ -160,6 +189,19 @@ def run_scraping(website: str, generic_codes, output_dir, batch_mode: bool, batc
         manager.google_sheet_update()
     elif output_dir and batch_timestamp:
         print_action(os.path.join(output_dir, f"batch_{website}Data_{batch_timestamp}.csv"))
+
+
+def retry_choose_website() -> str:
+    while True:
+        print_info("Retry which source?")
+        print_menu_item("1", "Taamin", _menu_color(Colors.WHITE) if Colors else None)
+        print_menu_item("2", "Khadamat", _menu_color(Colors.WHITE) if Colors else None)
+        sub = print_prompt("Choice [1/2]: ").strip()
+        if sub == "1":
+            return "Taamin"
+        if sub == "2":
+            return "Khadamat"
+        print_error("Invalid. Enter 1 or 2.")
 
 
 def main():
@@ -172,6 +214,7 @@ def main():
 
         selected_websites = []
         batch_mode = False
+        retry_mode = False
         triple_price_df = None
         generic_codes = None
 
@@ -214,8 +257,24 @@ def main():
             selected_websites = batch_choose_websites()
             batch_mode = True
 
+        elif choice == "6":
+            website = retry_choose_website()
+            try:
+                generic_codes = load_retry_codes(website=website)
+            except (FileNotFoundError, ValueError) as e:
+                print_error(str(e))
+                continue
+            print_success(
+                f"Loaded {len(generic_codes)} failed codes for {website} retry "
+                f"(from {os.path.join(RETRY_DIR, website.lower() + '_failed_codes.csv')})"
+            )
+            selected_websites = [website]
+            retry_mode = True
+            tp_object = TriplePrice()
+            triple_price_df = tp_object.download_file()
+
         else:
-            print_error("Invalid choice. Enter 1–5 or Q.")
+            print_error("Invalid choice. Enter 1–6 or Q.")
             continue
 
         # Set output dir and batch timestamp for batch mode
@@ -228,9 +287,13 @@ def main():
             batch_timestamp = None
 
         for website in selected_websites:
+            codes = generic_codes
+            if retry_mode and website != selected_websites[0]:
+                codes = load_retry_codes(website=website)
             run_scraping(
-                website, generic_codes, output_dir,
+                website, codes, output_dir,
                 batch_mode, batch_timestamp, triple_price_df,
+                retry_mode=retry_mode,
             )
 
 
