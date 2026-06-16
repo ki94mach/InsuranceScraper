@@ -5,7 +5,7 @@ Python tool that scrapes Iranian insurance websites (Khadamat, Taamin) for gener
 ## Requirements
 
 - **Windows** (primary environment; Selenium uses Firefox locally)
-- **Python 3.10** via Conda (see `environment.yml`)
+- **Python 3.10** (Conda: `environment.yml`, or any venv + `requirements.txt`)
 - **Mozilla Firefox** installed
 - **GeckoDriver** on `PATH`, compatible with your Firefox version
 - Network access to:
@@ -20,8 +20,14 @@ Python tool that scrapes Iranian insurance websites (Khadamat, Taamin) for gener
 git clone <repository-url>
 cd InsuranceScraper
 
+# Option A — Conda
 conda env create -f environment.yml
 conda activate Insurance
+
+# Option B — venv (no Conda)
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
 
 # Obtain src/data from your team (not in git) — see "Local data" below
 # Unzip handover archive into src\ so you have src\data\...
@@ -36,8 +42,8 @@ Always run commands from the **`src`** directory. Paths such as `data/KhadamatDa
 
 ```
 InsuranceScraper/
-├── environment.yml          # Conda env "Insurance"
-├── requirements.txt         # Exported conda spec (optional)
+├── environment.yml          # Minimal Conda env (installs requirements.txt)
+├── requirements.txt         # Python package dependencies
 ├── README.md
 └── src/
     ├── main.py              # Interactive CLI
