@@ -1,8 +1,10 @@
-import pandas as pd
-import requests
 import os
 from getpass import getpass
 from io import BytesIO
+
+import pandas as pd
+import requests
+from requests_ntlm import HttpNtlmAuth
 
 class TriplePrice():
 
@@ -42,16 +44,11 @@ class TriplePrice():
             if not password:
                 password = getpass("TriplePrice password: ")
 
-            try:
-                from requests_ntlm import HttpNtlmAuth
-                response = requests.get(
-                    url,
-                    auth=HttpNtlmAuth(username, password),
-                    timeout=60,
-                )
-            except ImportError:
-                # Fallback to basic auth if NTLM package is unavailable.
-                response = requests.get(url, auth=(username, password), timeout=60)
+            response = requests.get(
+                url,
+                auth=HttpNtlmAuth(username, password),
+                timeout=60,
+            )
         return response
     def _process_data(self, content) -> pd.DataFrame:
         """

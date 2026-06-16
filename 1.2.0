@@ -1,0 +1,24 @@
+Collecting requests-ntlm
+  Using cached requests_ntlm-1.3.0-py3-none-any.whl.metadata (2.4 kB)
+Requirement already satisfied: cryptography>=1.3 in c:\users\mohajeri.k\appdata\local\anaconda3\envs\insurance\lib\site-packages (from requests-ntlm) (44.0.1)
+Collecting pyspnego>=0.4.0 (from requests-ntlm)
+  Using cached pyspnego-0.12.1-py3-none-any.whl.metadata (4.1 kB)
+Requirement already satisfied: requests>=2.0.0 in c:\users\mohajeri.k\appdata\local\anaconda3\envs\insurance\lib\site-packages (from requests-ntlm) (2.32.5)
+Requirement already satisfied: cffi>=1.12 in c:\users\mohajeri.k\appdata\local\anaconda3\envs\insurance\lib\site-packages (from cryptography>=1.3->requests-ntlm) (1.17.1)
+Requirement already satisfied: pycparser in c:\users\mohajeri.k\appdata\local\anaconda3\envs\insurance\lib\site-packages (from cffi>=1.12->cryptography>=1.3->requests-ntlm) (2.21)
+Collecting sspilib>=0.3.0 (from pyspnego>=0.4.0->requests-ntlm)
+  Downloading sspilib-0.5.0-cp39-cp39-win_amd64.whl.metadata (6.9 kB)
+Requirement already satisfied: charset_normalizer<4,>=2 in c:\users\mohajeri.k\appdata\local\anaconda3\envs\insurance\lib\site-packages (from requests>=2.0.0->requests-ntlm) (2.0.4)
+Requirement already satisfied: idna<4,>=2.5 in c:\users\mohajeri.k\appdata\local\anaconda3\envs\insurance\lib\site-packages (from requests>=2.0.0->requests-ntlm) (3.7)
+Requirement already satisfied: urllib3<3,>=1.21.1 in c:\users\mohajeri.k\appdata\local\anaconda3\envs\insurance\lib\site-packages (from requests>=2.0.0->requests-ntlm) (2.5.0)
+Requirement already satisfied: certifi>=2017.4.17 in c:\users\mohajeri.k\appdata\local\anaconda3\envs\insurance\lib\site-packages (from requests>=2.0.0->requests-ntlm) (2025.10.5)
+Using cached requests_ntlm-1.3.0-py3-none-any.whl (6.6 kB)
+Using cached pyspnego-0.12.1-py3-none-any.whl (130 kB)
+Downloading sspilib-0.5.0-cp39-cp39-win_amd64.whl (565 kB)
+   ---------------------------------------- 565.6/565.6 kB 4.9 MB/s  0:00:00
+
+Installing collected packages: sspilib, pyspnego, requests-ntlm
+
+
+Successfully installed pyspnego-0.12.1 requests-ntlm-1.3.0 sspilib-0.5.0
+
