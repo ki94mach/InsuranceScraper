@@ -4,13 +4,27 @@ from gspread_formatting import *
 import string
 import csv
 class DataManager:
-    def __init__(self, website: str, insurance_df: pd.DataFrame, triple_price_df: pd.DataFrame, output_dir: str = None, batch_mode: bool = False, batch_timestamp: str = None):
+    def __init__(
+        self,
+        website: str,
+        insurance_df: pd.DataFrame,
+        triple_price_df: pd.DataFrame,
+        output_dir: str = None,
+        batch_mode: bool = False,
+        batch_timestamp: str = None,
+        retry_mode: bool = False,
+        retry_codes: list = None,
+        retry_date: str = None,
+    ):
         self.website = website
         self.insurance_df = insurance_df
         self.triple_price_df = triple_price_df
         self.output_dir = output_dir  # when set (e.g. data/batch), save mined data there only, no history merge
         self.batch_mode = batch_mode
         self.batch_timestamp = batch_timestamp  # e.g. "2025-02-08_14-30-22" for consistent batch filenames
+        self.retry_mode = retry_mode
+        self.retry_codes = retry_codes or []
+        self.retry_date = retry_date
 
     def storage(self):
         """
@@ -40,6 +54,12 @@ class DataManager:
 
         # converting generic_code into 5 digit number
         history_df['generic_code'] = history_df['generic_code'].str.pad(5, 'left', '0')
+
+        if self.retry_mode and self.retry_codes and self.retry_date:
+            from pkg.retry_codes import remove_failed_placeholders
+            history_df = remove_failed_placeholders(
+                history_df, self.retry_codes, self.retry_date,
+            )
 
         # concatenating the new data with the history data and sort dataframe by date in ascending order
         # only keeping the data when the coverage or price is changed and removing duplicate data on the first date
